@@ -5,11 +5,11 @@
 @section('breadcrumb', 'Programs / ' . $program->title . ' / Materials')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
-    <div>
+<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div class="min-w-0">
         <p class="text-sm text-slate-500">Materials for <span class="font-medium text-textmain">{{ $program->title }}</span></p>
     </div>
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2">
         <x-ui.button :href="route('programs.show', $program)" label="← Program" variant="secondary" size="sm" />
         @if(A::can('upload programs.material'))
             <x-ui.button :href="route('programs.materials.create', $program)" label="+ Add material" variant="primary" />

@@ -1,11 +1,11 @@
 @props(['paginator'])
 
 @if($paginator->hasPages())
-    <div class="flex items-center justify-between px-4 py-3 border-t border-slate-200">
-        <p class="text-xs text-slate-500">
+    <div class="flex flex-col gap-3 border-t border-slate-200 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+        <p class="text-center text-xs text-slate-500 sm:text-left">
             Showing {{ $paginator->firstItem() }}–{{ $paginator->lastItem() }} of {{ $paginator->total() }}
         </p>
-        <div class="flex items-center gap-1">
+        <div class="flex flex-wrap items-center justify-center gap-1">
             @if($paginator->onFirstPage())
                 <span class="px-3 py-1.5 text-xs text-slate-300 border border-slate-200 rounded cursor-not-allowed">Prev</span>
             @else

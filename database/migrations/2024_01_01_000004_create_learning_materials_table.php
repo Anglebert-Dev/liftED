@@ -12,8 +12,10 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('title');
-            $table->string('type')->default('document'); // pdf|video|image|document
-            $table->string('file_path');
+            $table->text('description')->nullable();
+            $table->string('external_url', 2048)->nullable();
+            $table->string('type')->default('document');
+            $table->string('file_path')->nullable();
             $table->unsignedBigInteger('program_id');
             $table->string('insert_by')->nullable();
             $table->string('update_by')->nullable();

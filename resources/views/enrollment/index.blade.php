@@ -5,15 +5,15 @@
 @section('breadcrumb', 'Programs / ' . $program->title . ' / Enrollments')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
-    <p class="text-sm text-slate-500">
+<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <p class="min-w-0 text-sm text-slate-500">
         <span class="font-medium text-textmain">{{ $program->title }}</span>
         — {{ $enrollments->count() }} learner(s) enrolled
     </p>
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2">
         <x-ui.button :href="route('programs.show', $program)" label="← Program" variant="secondary" size="sm" />
         @if(A::can('create learners.enrollment'))
-            <x-ui.button :href="route('programs.enrollments.create', $program)" label="+ Enroll Learner" variant="primary" />
+            <x-ui.button :href="route('programs.enrollments.create', $program)" label="+ Enroll Learner" variant="primary" class="w-full sm:w-auto" />
         @endif
     </div>
 </div>

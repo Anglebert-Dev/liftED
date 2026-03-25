@@ -16,9 +16,25 @@ class ProgressRepository extends BaseRepository
 
     public function findOrCreateForLearnerMaterial(int $learnerId, int $materialId, int $programId): Progress
     {
-        return $this->model->firstOrCreate(
-            ['learner_id' => $learnerId, 'material_id' => $materialId, 'program_id' => $programId]
-        );
+        $progress = $this->model->withTrashed()
+            ->where('learner_id', $learnerId)
+            ->where('material_id', $materialId)
+            ->where('program_id', $programId)
+            ->first();
+
+        if ($progress) {
+            if ($progress->trashed()) {
+                $progress->restore();
+            }
+
+            return $progress;
+        }
+
+        return $this->model->create([
+            'learner_id' => $learnerId,
+            'material_id' => $materialId,
+            'program_id' => $programId,
+        ]);
     }
 
     public function getAllForLearnerInProgram(int $learnerId, int $programId): Collection
@@ -26,7 +42,7 @@ class ProgressRepository extends BaseRepository
         return $this->model
             ->where('learner_id', $learnerId)
             ->where('program_id', $programId)
-            ->with(['material', 'feedback'])
+            ->with(['material'])
             ->latest()
             ->get();
     }
@@ -47,7 +63,7 @@ class ProgressRepository extends BaseRepository
         return $this->model
             ->where('learner_id', $learnerId)
             ->where('program_id', $programId)
-            ->with(['material', 'feedback'])
+            ->with(['material'])
             ->get();
     }
 

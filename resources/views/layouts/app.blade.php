@@ -41,21 +41,34 @@
             background-color: rgba(255, 255, 255, 0.2);
             color: #ffffff;
         }
+        body.mobile-nav-open {
+            overflow: hidden;
+        }
+        @media (min-width: 1024px) {
+            body.mobile-nav-open {
+                overflow: auto;
+            }
+        }
     </style>
 </head>
-<body class="h-full flex">
+<body class="min-h-screen flex flex-col bg-surface lg:flex-row lg:h-screen lg:overflow-hidden">
+
+    {{-- Mobile overlay --}}
+    <div id="sidebar-backdrop"
+         class="fixed inset-0 z-30 bg-black/40 opacity-0 pointer-events-none transition-opacity duration-200 lg:hidden"
+         aria-hidden="true"></div>
 
     {{-- Sidebar --}}
     <x-layout.sidebar />
 
     {{-- Main area --}}
-    <div class="flex-1 flex flex-col min-h-screen overflow-hidden">
+    <div class="flex min-h-screen min-w-0 flex-1 flex-col overflow-hidden lg:min-h-0">
 
         {{-- Topbar --}}
         <x-layout.topbar />
 
         {{-- Page content --}}
-        <main class="flex-1 overflow-y-auto p-6">
+        <main class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
 
             {{-- Flash messages --}}
             @if(session('success'))
@@ -71,5 +84,57 @@
         <x-layout.footer />
     </div>
 
+    <script>
+        (function () {
+            var sidebar = document.getElementById('app-sidebar');
+            var backdrop = document.getElementById('sidebar-backdrop');
+            var openBtn = document.getElementById('sidebar-open');
+            var closeBtn = document.getElementById('sidebar-close');
+            if (!sidebar || !backdrop) return;
+
+            function isDesktop() {
+                return window.matchMedia('(min-width: 1024px)').matches;
+            }
+
+            function openNav() {
+                if (isDesktop()) return;
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                backdrop.classList.add('opacity-100');
+                document.body.classList.add('mobile-nav-open');
+            }
+
+            function closeNav() {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+                backdrop.classList.remove('opacity-100');
+                document.body.classList.remove('mobile-nav-open');
+            }
+
+            function onResize() {
+                if (isDesktop()) {
+                    closeNav();
+                }
+            }
+
+            openBtn && openBtn.addEventListener('click', openNav);
+            closeBtn && closeBtn.addEventListener('click', closeNav);
+            backdrop.addEventListener('click', closeNav);
+            window.addEventListener('resize', onResize);
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !isDesktop()) closeNav();
+            });
+            sidebar.querySelectorAll('a.sidebar-link').forEach(function (a) {
+                a.addEventListener('click', function () {
+                    if (!isDesktop()) closeNav();
+                });
+            });
+            sidebar.querySelector('form[action*="logout"]')?.addEventListener('submit', function () {
+                if (!isDesktop()) closeNav();
+            });
+        })();
+    </script>
 </body>
 </html>

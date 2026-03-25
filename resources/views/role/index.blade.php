@@ -4,10 +4,10 @@
 @section('page-title', 'Roles & Permissions')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
+<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <p class="text-sm text-slate-500">{{ $roles->count() }} role(s)</p>
     @if(A::can('create users.role'))
-        <x-ui.button href="{{ route('roles.create') }}" label="+ New Role" variant="primary" />
+        <x-ui.button href="{{ route('roles.create') }}" label="+ New Role" variant="primary" class="w-full sm:w-auto" />
     @endif
 </div>
 

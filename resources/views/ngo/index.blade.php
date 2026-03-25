@@ -4,10 +4,10 @@
 @section('page-title', 'NGOs')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
+<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <p class="text-sm text-slate-500">{{ $ngos->total() }} organisation(s)</p>
     @if(A::can('create users.ngo'))
-        <x-ui.button href="{{ route('ngos.create') }}" label="+ New NGO" variant="primary" />
+        <x-ui.button href="{{ route('ngos.create') }}" label="+ New NGO" variant="primary" class="w-full sm:w-auto" />
     @endif
 </div>
 

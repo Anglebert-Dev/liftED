@@ -10,16 +10,18 @@ use App\Models\Program\Program;
 class Progress extends BaseModel
 {
     protected $fillable = [
+        'uuid',
         'learner_id',
         'material_id',
         'program_id',
         'viewed_at',
         'downloaded_at',
         'completion_status',
+        'insert_by',
+        'update_by',
+        'delete_by',
     ];
 
-    // Progress does not need UUID or audit fields by default
-    // but still soft-deletes via BaseModel
     protected function casts(): array
     {
         return array_merge(parent::casts(), [
@@ -28,7 +30,6 @@ class Progress extends BaseModel
         ]);
     }
 
-    // ── Relationships ──────────────────────────────────────────────
 
     public function learner()
     {
@@ -43,10 +44,5 @@ class Progress extends BaseModel
     public function program()
     {
         return $this->belongsTo(Program::class);
-    }
-
-    public function feedback()
-    {
-        return $this->hasOne(Feedback::class);
     }
 }

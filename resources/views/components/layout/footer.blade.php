@@ -1,5 +1,5 @@
-<footer class="bg-white border-t border-slate-200 px-6 py-3 flex-shrink-0">
-    <p class="text-xs text-slate-400 text-center">
+<footer class="flex-shrink-0 border-t border-slate-200 bg-white px-4 py-3 sm:px-6">
+    <p class="text-center text-xs text-slate-400">
         &copy; {{ date('Y') }} LiftED. All rights reserved.
     </p>
 </footer>

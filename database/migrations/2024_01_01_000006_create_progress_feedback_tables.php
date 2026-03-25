@@ -10,12 +10,16 @@ return new class extends Migration
     {
         Schema::create('progress', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->unsignedBigInteger('learner_id');
             $table->unsignedBigInteger('material_id');
             $table->unsignedBigInteger('program_id');
             $table->timestamp('viewed_at')->nullable();
             $table->timestamp('downloaded_at')->nullable();
             $table->string('completion_status')->nullable(); // in_progress|completed
+            $table->string('insert_by')->nullable();
+            $table->string('update_by')->nullable();
+            $table->string('delete_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

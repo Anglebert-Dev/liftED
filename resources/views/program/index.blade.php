@@ -3,10 +3,10 @@
 @section('page-title', 'Programs')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
+<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <p class="text-sm text-slate-500">{{ $programs->total() }} program(s)</p>
     @can('create', \App\Models\Program\Program::class)
-        <x-ui.button href="{{ route('programs.create') }}" label="+ New Program" variant="primary" />
+        <x-ui.button href="{{ route('programs.create') }}" label="+ New Program" variant="primary" class="w-full sm:w-auto" />
     @endcan
 </div>
 

@@ -4,9 +4,9 @@
 @section('page-title', 'Users')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
+<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <p class="text-sm text-slate-500">{{ $users->total() }} user(s)</p>
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2">
         @if(A::can('list users.role'))
             <x-ui.button href="{{ route('roles.index') }}" label="Manage Roles" variant="secondary" />
         @endif

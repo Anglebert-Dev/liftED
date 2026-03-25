@@ -59,7 +59,7 @@ class LearningMaterialService extends BaseService
                 $material->file_path = UploadLibrary::store($file, 'materials/'.$material->type);
             } else {
                 $material->type = UploadLibrary::guessTypeFromUrl((string) $material->external_url);
-                $material->file_path = '';
+                $material->file_path = null;
             }
 
             $this->repo->save($material);

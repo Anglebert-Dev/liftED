@@ -1,22 +1,32 @@
 @use('App\Helpers\AuthHelper', 'A')
 
-<aside class="w-64 bg-primary flex flex-col min-h-screen flex-shrink-0">
+<aside id="app-sidebar"
+       class="fixed inset-y-0 left-0 z-40 flex min-h-screen w-64 max-w-[85vw] flex-shrink-0 flex-col bg-primary shadow-2xl transition-transform duration-200 ease-out
+              -translate-x-full lg:static lg:z-auto lg:max-w-none lg:translate-x-0 lg:shadow-none">
 
     {{-- Brand --}}
-    <div class="px-6 py-5 border-b border-white/10">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 bg-white/20 rounded-lg flex items-center justify-center">
-                <span class="text-white font-bold text-lg">L</span>
+    <div class="flex items-start justify-between gap-2 border-b border-white/10 px-4 py-4 sm:px-6 sm:py-5">
+        <div class="flex min-w-0 items-center gap-3">
+            <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-white/20">
+                <span class="text-lg font-bold text-white">L</span>
             </div>
-            <div>
-                <p class="text-white font-semibold text-sm leading-tight">LiftED</p>
-                <p class="text-white/50 text-xs">{{ auth()->user()->role }}</p>
+            <div class="min-w-0">
+                <p class="text-sm font-semibold leading-tight text-white">LiftED</p>
+                <p class="truncate text-xs text-white/50">{{ auth()->user()->role }}</p>
             </div>
         </div>
+        <button type="button"
+                id="sidebar-close"
+                class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white lg:hidden"
+                aria-label="Close menu">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
     </div>
 
     {{-- Navigation --}}
-    <nav class="flex-1 px-3 py-4 space-y-1">
+    <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
 
         @if(A::can('list programs.program'))
             <a href="{{ route('programs.index') }}"
