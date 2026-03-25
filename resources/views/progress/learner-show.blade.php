@@ -4,26 +4,29 @@
 @section('breadcrumb', 'Programs / ' . $program->title . ' / Progress')
 
 @section('content')
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+<div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
 
     <div class="lg:col-span-2">
         <x-ui.card
             title="Your activity"
             :description="$program->title . ' — ' . $progressRecords->count() . ' material(s) with activity'">
 
-            <p class="text-xs text-slate-500 mb-3">
+            <p class="mb-3 text-xs text-slate-500">
                 <span class="font-medium text-textmain">Completed</span> means you pressed “Mark complete” for that resource.
-                Downloads and opened links count as activity but do not auto-complete items.
+                Mentor notes for each material appear in the last column when your mentor adds them.
             </p>
 
             @if($progressRecords->isEmpty())
                 <p class="text-sm text-slate-400">
-                    Open materials from <a href="{{ route('programs.materials.index', $program) }}" class="text-primary underline font-medium">Learning Materials</a>
+                    Open materials from <a href="{{ route('programs.materials.index', $program) }}" class="font-medium text-primary underline">Learning Materials</a>
                     to start tracking progress here.
                 </p>
             @else
-                <x-table.table :headers="['Material', 'Type', 'Viewed', 'Downloaded', 'Status']">
+                <x-table.table :headers="['Material', 'Type', 'Viewed', 'Downloaded', 'Status', 'Mentor note']">
                     @foreach($progressRecords as $record)
+                        @php
+                            $matFeedback = $feedbackByMaterial->get((string) $record->material_id);
+                        @endphp
                         <x-table.table-row>
                             <td class="px-4 py-3 text-sm font-medium text-textmain">
                                 {{ $record->material->title }}
@@ -48,6 +51,9 @@
                                     <x-ui.badge color="gray" label="Not started" />
                                 @endif
                             </td>
+                            <td class="max-w-xs px-4 py-3 text-xs text-slate-600">
+                                {{ $matFeedback ? Str::limit($matFeedback->content, 160) : '—' }}
+                            </td>
                         </x-table.table-row>
                     @endforeach
                 </x-table.table>
@@ -57,14 +63,28 @@
 
     <div>
         <x-ui.card title="Mentor feedback">
-            @if($feedback)
-                <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-700">
-                    {{ $feedback->content }}
-                    <p class="text-xs text-slate-400 mt-2">
-                        Last updated {{ $feedback->updated_at->format('d M Y') }}
-                    </p>
+            @if($fbProgram = $feedbackByMaterial->get('program'))
+                <div class="mb-4 rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
+                    <p class="text-xs font-medium text-slate-500">Whole program</p>
+                    <p class="mt-1">{{ $fbProgram->content }}</p>
+                    <p class="mt-2 text-xs text-slate-400">Updated {{ $fbProgram->updated_at->format('d M Y') }}</p>
                 </div>
-            @else
+            @endif
+
+            @if($feedbackByMaterial->except('program')->isNotEmpty())
+                <p class="mb-2 text-xs font-medium text-slate-500">Per material</p>
+                <ul class="space-y-3 text-sm text-slate-700">
+                    @foreach($feedbackByMaterial->except('program') as $fb)
+                        @if($fb->material)
+                            <li class="rounded-lg border border-slate-100 bg-white p-3">
+                                <p class="text-xs font-medium text-textmain">{{ $fb->material->title }}</p>
+                                <p class="mt-1">{{ $fb->content }}</p>
+                                <p class="mt-2 text-xs text-slate-400">{{ $fb->updated_at->format('d M Y') }}</p>
+                            </li>
+                        @endif
+                    @endforeach
+                </ul>
+            @elseif(! $feedbackByMaterial->get('program'))
                 <p class="text-sm text-slate-400">Your mentor has not left feedback yet.</p>
             @endif
         </x-ui.card>

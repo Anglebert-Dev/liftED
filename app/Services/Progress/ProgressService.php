@@ -66,10 +66,11 @@ class ProgressService extends BaseService
     {
         try {
             $feedback = $this->repo->saveFeedback([
-                'mentor_id' => auth()->id(),
-                'learner_id' => $request->input('learner_id'),
-                'program_id' => $request->input('program_id'),
-                'content' => $request->input('content'),
+                'mentor_id'   => auth()->id(),
+                'learner_id'  => $request->input('learner_id'),
+                'program_id'  => $request->input('program_id'),
+                'material_id' => $request->filled('material_id') ? (int) $request->input('material_id') : null,
+                'content'     => $request->input('content'),
             ]);
 
             return $this->success($feedback, 'Feedback saved.');

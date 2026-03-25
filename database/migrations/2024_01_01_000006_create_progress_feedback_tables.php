@@ -36,6 +36,7 @@ return new class extends Migration
             $table->unsignedBigInteger('mentor_id');
             $table->unsignedBigInteger('learner_id');
             $table->unsignedBigInteger('program_id');
+            $table->unsignedBigInteger('material_id')->nullable();
             $table->text('content');
             $table->string('insert_by')->nullable();
             $table->string('update_by')->nullable();
@@ -46,6 +47,7 @@ return new class extends Migration
             $table->foreign('mentor_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('learner_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('program_id')->references('id')->on('programs')->cascadeOnDelete();
+            $table->foreign('material_id')->references('id')->on('learning_materials')->cascadeOnDelete();
         });
     }
 

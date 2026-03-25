@@ -2,10 +2,11 @@
 
 namespace App\Repositories\Progress;
 
-use App\Models\Progress\Progress;
 use App\Models\Progress\Feedback;
+use App\Models\Progress\Progress;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 class ProgressRepository extends BaseRepository
 {
@@ -67,24 +68,28 @@ class ProgressRepository extends BaseRepository
             ->get();
     }
 
-    // Feedback
 
     public function saveFeedback(array $data): Feedback
     {
         return Feedback::updateOrCreate(
             [
-                'mentor_id'  => $data['mentor_id'],
-                'learner_id' => $data['learner_id'],
-                'program_id' => $data['program_id'],
+                'mentor_id'   => $data['mentor_id'],
+                'learner_id'  => $data['learner_id'],
+                'program_id'  => $data['program_id'],
+                'material_id' => $data['material_id'] ?? null,
             ],
             ['content' => $data['content']]
         );
     }
 
-    public function getFeedbackForLearnerInProgram(int $learnerId, int $programId): ?Feedback
+ 
+    public function getFeedbackMapForLearnerProgram(int $learnerId, int $programId, int $mentorId): SupportCollection
     {
-        return Feedback::where('learner_id', $learnerId)
+        return Feedback::query()
+            ->where('learner_id', $learnerId)
             ->where('program_id', $programId)
-            ->first();
+            ->where('mentor_id', $mentorId)
+            ->get()
+            ->keyBy(fn (Feedback $f) => $f->material_id === null ? 'program' : (string) $f->material_id);
     }
 }

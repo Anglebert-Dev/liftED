@@ -3,8 +3,14 @@
 @section('page-title', $learner->fullName() . ' — Progress')
 @section('breadcrumb', 'Progress / ' . $program->title . ' / ' . $learner->fullName())
 
+@php
+    $oldMaterial = old('material_id');
+    $feedbackKey = ($oldMaterial === '' || $oldMaterial === null) ? 'program' : (string) $oldMaterial;
+    $prefillContent = old('content', $feedbackByMaterial->get($feedbackKey)?->content ?? '');
+@endphp
+
 @section('content')
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+<div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
 
     {{-- Progress records --}}
     <div class="lg:col-span-2">
@@ -12,15 +18,19 @@
             title="Activity Log"
             :description="$program->title . ' — ' . $progressRecords->count() . ' material(s) tracked'">
 
-            <p class="text-xs text-slate-500 mb-3">
+            <p class="mb-3 text-xs text-slate-500">
                 <span class="font-medium text-textmain">Completed</span> is set when the learner marks a resource complete.
+                Mentor notes can be added per material (or one general note for the whole program) in the panel on the right.
             </p>
 
             @if($progressRecords->isEmpty())
                 <p class="text-sm text-slate-400">This learner hasn't accessed any materials yet.</p>
             @else
-                <x-table.table :headers="['Material', 'Type', 'Viewed', 'Downloaded', 'Status']">
+                <x-table.table :headers="['Material', 'Type', 'Viewed', 'Downloaded', 'Status', 'Mentor note']">
                     @foreach($progressRecords as $record)
+                        @php
+                            $matFeedback = $feedbackByMaterial->get((string) $record->material_id);
+                        @endphp
                         <x-table.table-row>
                             <td class="px-4 py-3 text-sm font-medium text-textmain">
                                 {{ $record->material->title }}
@@ -45,6 +55,9 @@
                                     <x-ui.badge color="gray" label="Not Started" />
                                 @endif
                             </td>
+                            <td class="max-w-xs px-4 py-3 text-xs text-slate-600">
+                                {{ $matFeedback ? Str::limit($matFeedback->content, 120) : '—' }}
+                            </td>
                         </x-table.table-row>
                     @endforeach
                 </x-table.table>
@@ -54,13 +67,12 @@
 
     {{-- Feedback panel --}}
     <div>
-        <x-ui.card title="Mentor Feedback">
-            @if($feedback)
-                <div class="bg-slate-50 rounded-lg p-3 mb-4 text-sm text-slate-700">
-                    {{ $feedback->content }}
-                    <p class="text-xs text-slate-400 mt-2">
-                        Last updated {{ $feedback->updated_at->format('d M Y') }}
-                    </p>
+        <x-ui.card title="Mentor feedback">
+            @if($fbProgram = $feedbackByMaterial->get('program'))
+                <div class="mb-4 rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
+                    <p class="text-xs font-medium text-slate-500">Whole program</p>
+                    <p class="mt-1">{{ Str::limit($fbProgram->content, 200) }}</p>
+                    <p class="mt-2 text-xs text-slate-400">Updated {{ $fbProgram->updated_at->format('d M Y') }}</p>
                 </div>
             @endif
 
@@ -69,16 +81,24 @@
                 <input type="hidden" name="learner_id" value="{{ $learner->id }}" />
                 <input type="hidden" name="program_id" value="{{ $program->id }}" />
 
+                <x-forms.select
+                    name="material_id"
+                    label="About"
+                    :options="$feedbackMaterialOptions"
+                    :selected="old('material_id', '')"
+                    placeholder="Whole program (general)"
+                    :required="false" />
+
                 <x-forms.textarea
                     name="content"
-                    label="{{ $feedback ? 'Update Feedback' : 'Add Feedback' }}"
-                    :value="old('content', $feedback->content ?? '')"
-                    placeholder="Write your feedback for this learner…"
+                    label="Your feedback"
+                    :value="$prefillContent"
+                    placeholder="Write feedback for the selected scope. Saving updates the note for that scope only."
                     :rows="5"
                     :required="true" />
 
                 <x-ui.button type="submit"
-                             label="{{ $feedback ? 'Update Feedback' : 'Save Feedback' }}"
+                             label="Save feedback"
                              variant="primary"
                              class="w-full" />
             </form>

@@ -3,9 +3,9 @@
 namespace App\Models\Progress;
 
 use App\Models\BaseModel;
-use App\Models\User;
 use App\Models\LearningMaterial\LearningMaterial;
 use App\Models\Program\Program;
+use App\Models\User;
 
 class Progress extends BaseModel
 {
@@ -45,4 +45,15 @@ class Progress extends BaseModel
     {
         return $this->belongsTo(Program::class);
     }
+
+    /**
+     * Mentor note for this specific material (same learner + program + material).
+     */
+    public function mentorFeedback()
+    {
+        return $this->hasOne(Feedback::class, 'material_id', 'material_id')
+            ->whereColumn('feedback.learner_id', $this->getTable().'.learner_id')
+            ->whereColumn('feedback.program_id', $this->getTable().'.program_id');
+    }
 }
+

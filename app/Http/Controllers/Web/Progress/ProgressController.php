@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Progress;
 use App\Helpers\AuthHelper as A;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Progress\SaveFeedbackRequest;
+use App\Models\Enrollment\Enrollment;
 use App\Models\Program\Program;
 use App\Models\User;
 use App\Repositories\Enrollment\EnrollmentRepository;
@@ -32,9 +33,10 @@ class ProgressController extends Controller
     {
         A::require('read learners.progress');
         $progressRecords = $this->repo->getWithStats($learner->id, $program->id);
-        $feedback = $this->repo->getFeedbackForLearnerInProgram($learner->id, $program->id);
+        $feedbackByMaterial = $this->repo->getFeedbackMapForLearnerProgram($learner->id, $program->id, auth()->id());
+        $feedbackMaterialOptions = $program->learningMaterials()->orderBy('title')->pluck('title', 'id')->all();
 
-        return view('progress.show', compact('program', 'learner', 'progressRecords', 'feedback'));
+        return view('progress.show', compact('program', 'learner', 'progressRecords', 'feedbackByMaterial', 'feedbackMaterialOptions'));
     }
 
     public function storeFeedback(SaveFeedbackRequest $request)
@@ -56,8 +58,12 @@ class ProgressController extends Controller
 
         $user = auth()->user();
         $progressRecords = $this->repo->getWithStats($user->id, $program->id);
-        $feedback = $this->repo->getFeedbackForLearnerInProgram($user->id, $program->id);
+        $enrollment = Enrollment::where('learner_id', $user->id)->where('program_id', $program->id)->first();
+        $mentorId = $enrollment?->mentor_id;
+        $feedbackByMaterial = $mentorId
+            ? $this->repo->getFeedbackMapForLearnerProgram($user->id, $program->id, $mentorId)
+            : collect();
 
-        return view('progress.learner-show', compact('program', 'progressRecords', 'feedback'));
+        return view('progress.learner-show', compact('program', 'progressRecords', 'feedbackByMaterial'));
     }
 }

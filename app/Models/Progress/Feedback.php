@@ -3,8 +3,9 @@
 namespace App\Models\Progress;
 
 use App\Models\BaseModel;
-use App\Models\User;
+use App\Models\LearningMaterial\LearningMaterial;
 use App\Models\Program\Program;
+use App\Models\User;
 
 class Feedback extends BaseModel
 {
@@ -13,10 +14,9 @@ class Feedback extends BaseModel
         'mentor_id',
         'learner_id',
         'program_id',
+        'material_id',
         'content',
     ];
-
-    // ── Relationships ──────────────────────────────────────────────
 
     public function mentor()
     {
@@ -31,5 +31,10 @@ class Feedback extends BaseModel
     public function program()
     {
         return $this->belongsTo(Program::class);
+    }
+
+    public function material()
+    {
+        return $this->belongsTo(LearningMaterial::class, 'material_id');
     }
 }
