@@ -33,12 +33,16 @@
                     <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
                             <x-ui.button :href="route('programs.show', $program)" label="View" variant="secondary" size="sm" />
-                            <x-ui.button :href="route('programs.edit', $program)" label="Edit" variant="ghost" size="sm" />
-                            <form method="POST" action="{{ route('programs.destroy', $program) }}"
-                                  onsubmit="return confirm('Delete this program?')">
-                                @csrf @method('DELETE')
-                                <x-ui.button type="submit" label="Delete" variant="danger" size="sm" />
-                            </form>
+                            @can('update', $program)
+                                <x-ui.button :href="route('programs.edit', $program)" label="Edit" variant="ghost" size="sm" />
+                            @endcan
+                            @can('delete', $program)
+                                <form method="POST" action="{{ route('programs.destroy', $program) }}"
+                                      onsubmit="return confirm('Delete this program?')">
+                                    @csrf @method('DELETE')
+                                    <x-ui.button type="submit" label="Delete" variant="danger" size="sm" />
+                                </form>
+                            @endcan
                         </div>
                     </td>
                 </x-table.table-row>

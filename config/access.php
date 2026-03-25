@@ -17,7 +17,7 @@ return [
     'access_modules' => [
         'programs' => ['program', 'material'],
         'learners' => ['enrollment', 'progress'],
-        'users'    => ['user', 'role'],
+        'users' => ['user', 'role', 'ngo'],
     ],
 
     'access_actions' => [
@@ -27,6 +27,7 @@ return [
 
     'extra_permissions' => [
         'view all programs',
+        'read learners.own_progress',
     ],
 
 ];

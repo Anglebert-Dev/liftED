@@ -21,11 +21,20 @@
                         Mentor: <span class="font-medium text-textmain">{{ $enrollment->mentor->fullName() }}</span>
                     </p>
                 @endif
-                <x-ui.button
-                    :href="route('programs.materials.index', $enrollment->program)"
-                    label="View Materials"
-                    variant="primary"
-                    size="sm" />
+                <div class="flex flex-wrap gap-2">
+                    <x-ui.button
+                        :href="route('programs.materials.index', $enrollment->program)"
+                        label="Materials"
+                        variant="primary"
+                        size="sm" />
+                    @can('read learners.own_progress')
+                        <x-ui.button
+                            :href="route('programs.progress.me', $enrollment->program)"
+                            label="My progress"
+                            variant="secondary"
+                            size="sm" />
+                    @endcan
+                </div>
             </div>
         @endforeach
     </div>

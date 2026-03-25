@@ -10,39 +10,33 @@ use App\Models\User;
 use App\Repositories\Enrollment\EnrollmentRepository;
 use App\Repositories\Progress\ProgressRepository;
 use App\Services\Progress\ProgressService;
+use Illuminate\Support\Facades\Gate;
 
 class ProgressController extends Controller
 {
     public function __construct(
-        private ProgressService      $service,
-        private ProgressRepository   $repo,
+        private ProgressService $service,
+        private ProgressRepository $repo,
         private EnrollmentRepository $enrollmentRepo,
     ) {}
 
-    /**
-     * Mentor: view all assigned learners and their progress.
-     */
     public function index()
     {
         A::require('list learners.progress');
         $enrollments = $this->enrollmentRepo->getByMentor(auth()->id());
+
         return view('progress.index', compact('enrollments'));
     }
 
-    /**
-     * Mentor: view a specific learner's progress in a program.
-     */
     public function show(Program $program, User $learner)
     {
         A::require('read learners.progress');
         $progressRecords = $this->repo->getWithStats($learner->id, $program->id);
-        $feedback        = $this->repo->getFeedbackForLearnerInProgram($learner->id, $program->id);
+        $feedback = $this->repo->getFeedbackForLearnerInProgram($learner->id, $program->id);
+
         return view('progress.show', compact('program', 'learner', 'progressRecords', 'feedback'));
     }
 
-    /**
-     * Mentor: save feedback for a learner.
-     */
     public function storeFeedback(SaveFeedbackRequest $request)
     {
         A::require('update learners.progress');
@@ -53,5 +47,17 @@ class ProgressController extends Controller
         }
 
         return back()->with('success', $result['message']);
+    }
+
+    public function learnerShow(Program $program)
+    {
+        A::require('read learners.own_progress');
+        Gate::authorize('view', $program);
+
+        $user = auth()->user();
+        $progressRecords = $this->repo->getWithStats($user->id, $program->id);
+        $feedback = $this->repo->getFeedbackForLearnerInProgram($user->id, $program->id);
+
+        return view('progress.learner-show', compact('program', 'progressRecords', 'feedback'));
     }
 }

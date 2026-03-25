@@ -4,8 +4,8 @@ namespace App\Repositories\Program;
 
 use App\Models\Program\Program;
 use App\Repositories\BaseRepository;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProgramRepository extends BaseRepository
 {
@@ -23,6 +23,17 @@ class ProgramRepository extends BaseRepository
     {
         return $this->model
             ->forNgo($ngoId)
+            ->with('ngo')
+            ->withCount(['learningMaterials', 'enrollments'])
+            ->latest()
+            ->paginate($perPage);
+    }
+
+    public function getPaginatedForLearner(int $learnerId, int $ngoId, int $perPage = 20): LengthAwarePaginator
+    {
+        return $this->model
+            ->forNgo($ngoId)
+            ->whereHas('enrollments', fn ($q) => $q->where('learner_id', $learnerId))
             ->with('ngo')
             ->withCount(['learningMaterials', 'enrollments'])
             ->latest()

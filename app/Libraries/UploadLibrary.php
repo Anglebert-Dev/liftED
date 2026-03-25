@@ -11,14 +11,13 @@ class UploadLibrary
     /**
      * Store an uploaded file and return its stored path.
      *
-     * @param  UploadedFile  $file
-     * @param  string        $directory  e.g. 'materials/pdf'
-     * @return string        stored path relative to the disk root
+     * @param  string  $directory  e.g. 'materials/pdf'
+     * @return string stored path relative to the disk root
      */
     public static function store(UploadedFile $file, string $directory = 'materials'): string
     {
         $extension = $file->getClientOriginalExtension();
-        $filename  = Str::uuid() . '.' . $extension;
+        $filename = Str::uuid().'.'.$extension;
 
         return $file->storeAs($directory, $filename, 'local');
     }
@@ -43,10 +42,25 @@ class UploadLibrary
         $mime = $file->getMimeType();
 
         return match (true) {
-            str_contains($mime, 'pdf')   => 'pdf',
+            str_contains($mime, 'pdf') => 'pdf',
             str_contains($mime, 'video') => 'video',
             str_contains($mime, 'image') => 'image',
-            default                      => 'document',
+            default => 'document',
+        };
+    }
+
+    /**
+     * Classify external resources for display (link, video hosting, etc.).
+     */
+    public static function guessTypeFromUrl(string $url): string
+    {
+        $lower = strtolower($url);
+
+        return match (true) {
+            str_contains($lower, 'youtube.com'),
+            str_contains($lower, 'youtu.be'),
+            str_contains($lower, 'vimeo.com') => 'video',
+            default => 'link',
         };
     }
 }
