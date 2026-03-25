@@ -18,8 +18,7 @@ class LearningMaterialPolicy
         if (! A::can('read programs.material')) {
             return false;
         }
-        // Learners must be enrolled
-        if ($user->role === 'learner') {
+        if (A::can('read learners.own_progress')) {
             return \App\Models\Enrollment\Enrollment::where('learner_id', $user->id)
                 ->where('program_id', $material->program_id)
                 ->exists();

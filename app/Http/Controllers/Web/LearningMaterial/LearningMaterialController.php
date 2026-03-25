@@ -29,7 +29,7 @@ class LearningMaterialController extends Controller
         $materials = $this->repo->getByProgram($program->id);
 
         $progressByMaterialId = [];
-        if (auth()->user()->role === 'learner') {
+        if (A::can('read learners.own_progress')) {
             $progressByMaterialId = Progress::query()
                 ->where('learner_id', auth()->id())
                 ->where('program_id', $program->id)
@@ -126,7 +126,7 @@ class LearningMaterialController extends Controller
             abort(403, 'Invalid link.');
         }
 
-        if (auth()->user()->role === 'learner') {
+        if (A::can('read learners.own_progress')) {
             $this->progressService->logView(auth()->id(), $material->id, $program->id);
         }
 
@@ -140,11 +140,11 @@ class LearningMaterialController extends Controller
         Gate::authorize('view', $material);
         $this->assertMaterialInProgram($program, $material);
 
-        $user = auth()->user();
-        if ($user->role !== 'learner') {
+        if (! A::can('read learners.own_progress')) {
             abort(403);
         }
 
+        $user = auth()->user();
         $result = $this->progressService->markCompleteByLearner($user->id, $material->id, $program->id);
 
         if (! $result['status']) {
@@ -163,7 +163,7 @@ class LearningMaterialController extends Controller
 
         if ($material->hasStoredFile() && Storage::disk('local')->exists($material->file_path)) {
             $user = auth()->user();
-            if ($user->role === 'learner') {
+            if (A::can('read learners.own_progress')) {
                 $this->progressService->logView($user->id, $material->id, $program->id);
                 $this->progressService->logDownload($user->id, $material->id, $program->id);
             }

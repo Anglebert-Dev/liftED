@@ -53,8 +53,12 @@ class DatabaseSeeder extends Seeder
             ]
         );
         $staffRole = Role::firstOrCreate(['name' => 'NGO Staff', 'guard_name' => 'web']);
-        $staffPerms = Permission::where('name', 'like', '% programs.%')
-            ->orWhere('name', 'like', '% learners.%')
+        $staffPerms = Permission::query()
+            ->where(function ($q) {
+                $q->where('name', 'like', '% programs.%')
+                    ->orWhere('name', 'like', '% learners.%');
+            })
+            ->whereNotIn('name', ['update learners.progress', 'read learners.own_progress'])
             ->get();
         $staffRole->syncPermissions($staffPerms);
         $staff->syncRoles(['NGO Staff']);

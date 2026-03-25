@@ -20,25 +20,25 @@ class ProgramPolicy
             return false;
         }
 
-        if ($user->role === 'superadmin') {
-            return A::can('view all programs');
+        if (A::can('view all programs')) {
+            return true;
         }
 
         if ((int) $user->ngo_id !== (int) $program->ngo_id) {
             return false;
         }
 
-        if ($user->role === 'ngo_staff') {
+        if (A::can('list learners.enrollment') || A::can('list programs.program')) {
             return true;
         }
 
-        if ($user->role === 'learner') {
+        if (A::can('read learners.own_progress')) {
             return Enrollment::where('learner_id', $user->id)
                 ->where('program_id', $program->id)
                 ->exists();
         }
 
-        if ($user->role === 'mentor') {
+        if (A::can('read learners.progress')) {
             return Enrollment::where('program_id', $program->id)
                 ->where('mentor_id', $user->id)
                 ->exists();

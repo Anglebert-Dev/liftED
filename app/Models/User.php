@@ -73,6 +73,16 @@ class User extends BaseModel implements
         return $this->firstname . ' ' . $this->lastname;
     }
 
+    public function roleLabel(): string
+    {
+        $name = $this->getRoleNames()->first();
+
+        if ($name) {
+            return (string) $name;
+        }
+
+        return str_replace('_', ' ', ucfirst((string) $this->role));
+    }
 
     public function scopeByRole($query, string $role)
     {

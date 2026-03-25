@@ -74,7 +74,7 @@
                                     variant="{{ $material->hasExternalUrl() ? 'ghost' : 'secondary' }}"
                                     size="sm" />
                             @endif
-                            @if(auth()->user()->role === 'learner')
+                            @if(A::can('read learners.own_progress'))
                                 @if($isDone)
                                     <x-ui.badge color="green" label="Completed" />
                                 @else
@@ -106,7 +106,7 @@
         </x-table.table>
     </x-ui.card>
 
-    @if(auth()->user()->role === 'learner')
+    @if(A::can('read learners.own_progress'))
         <p class="text-xs text-slate-500 mt-3">
             <span class="font-medium text-textmain">Tip:</span> Downloading or opening a link only shows activity.
             Use <span class="font-medium">Mark complete</span> when you have finished studying the resource.

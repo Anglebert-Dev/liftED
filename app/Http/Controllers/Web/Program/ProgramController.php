@@ -21,7 +21,7 @@ class ProgramController extends Controller
     {
         A::require('list programs.program');
         $user = auth()->user();
-        $programs = $user->role === 'learner'
+        $programs = A::can('read learners.own_progress')
             ? $this->repo->getPaginatedForLearner($user->id, $user->ngo_id)
             : $this->repo->getPaginatedForNgo($user->ngo_id);
 

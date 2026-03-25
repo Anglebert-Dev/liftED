@@ -12,7 +12,7 @@
             </div>
             <div class="min-w-0">
                 <p class="text-sm font-semibold leading-tight text-white">LiftED</p>
-                <p class="truncate text-xs text-white/50">{{ auth()->user()->role }}</p>
+                <p class="truncate text-xs text-white/50">{{ auth()->user()->roleLabel() }}</p>
             </div>
         </div>
         <button type="button"
@@ -95,7 +95,7 @@
         @endif
 
         {{-- Learner: My Programs --}}
-        @if(auth()->user()->role === 'learner')
+        @if(A::can('read learners.own_progress'))
             <a href="{{ route('dashboard.learner') }}"
                class="sidebar-link {{ request()->routeIs('dashboard.learner') ? 'active' : '' }}">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -18,12 +18,20 @@ class AuthHelper
 
         $user = auth()->user();
 
-        // SuperAdmin has everything
-        if ($user->hasRole('SuperAdmin')) {
-            return true;
-        }
-
         $permissions = explode('|', $permission);
+
+        if ($user->hasRole('SuperAdmin')) {
+            foreach ($permissions as $perm) {
+                $name = trim($perm);
+                if (in_array($name, self::superAdminDeniedPermissions(), true)) {
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
 
         foreach ($permissions as $perm) {
             if ($user->hasPermissionTo(trim($perm))) {
@@ -32,6 +40,16 @@ class AuthHelper
         }
 
         return false;
+    }
+
+    /**
+     * SuperAdmin bypass must not grant learner-only permissions.
+     *
+     * @return list<string>
+     */
+    public static function superAdminDeniedPermissions(): array
+    {
+        return ['read learners.own_progress'];
     }
 
     /**
