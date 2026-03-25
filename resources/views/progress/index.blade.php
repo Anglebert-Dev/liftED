@@ -5,10 +5,12 @@
 @section('content')
 @if($enrollments->isEmpty())
     <x-ui.empty-state
-        title="No learners assigned"
-        description="You haven't been assigned to any learners yet." />
+        title="No enrollments to show"
+        description="{{ ($orgWide ?? false) ? 'There are no enrollments in scope yet.' : 'You have no assigned learners yet.' }}" />
 @else
-    <x-ui.card title="My Assigned Learners" :description="$enrollments->count() . ' learner(s)'">
+    <x-ui.card
+        :title="($globalScope ?? false) ? 'All progress' : (($orgWide ?? false) ? 'Organisation progress' : 'My assigned learners')"
+        :description="$enrollments->count() . ' enrollment(s)'">
         <x-table.table :headers="['Learner', 'Program', 'Enrolled', 'Actions']">
             @foreach($enrollments as $enrollment)
                 <x-table.table-row>

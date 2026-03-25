@@ -40,6 +40,23 @@ class EnrollmentRepository extends BaseRepository
             ->get();
     }
 
+    public function getByNgo(int $ngoId): Collection
+    {
+        return $this->model
+            ->whereHas('program', fn ($q) => $q->where('ngo_id', $ngoId))
+            ->with(['learner', 'mentor', 'program'])
+            ->latest()
+            ->get();
+    }
+
+    public function getAll(): Collection
+    {
+        return $this->model
+            ->with(['learner', 'mentor', 'program'])
+            ->latest()
+            ->get();
+    }
+
     public function findByLearnerAndProgram(int $learnerId, int $programId): ?Enrollment
     {
         return $this->model

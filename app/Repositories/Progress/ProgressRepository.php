@@ -83,13 +83,34 @@ class ProgressRepository extends BaseRepository
     }
 
  
-    public function getFeedbackMapForLearnerProgram(int $learnerId, int $programId, int $mentorId): SupportCollection
+    public function getFeedbackMapForLearnerProgram(int $learnerId, int $programId, int $authorUserId): SupportCollection
     {
         return Feedback::query()
             ->where('learner_id', $learnerId)
             ->where('program_id', $programId)
-            ->where('mentor_id', $mentorId)
+            ->where('mentor_id', $authorUserId)
             ->get()
             ->keyBy(fn (Feedback $f) => $f->material_id === null ? 'program' : (string) $f->material_id);
+    }
+
+    /** Latest note per scope across all authors (mentors, staff, etc.). */
+    public function getFeedbackMapAggregateForLearnerProgram(int $learnerId, int $programId): SupportCollection
+    {
+        $rows = Feedback::query()
+            ->where('learner_id', $learnerId)
+            ->where('program_id', $programId)
+            ->with('material')
+            ->orderByDesc('updated_at')
+            ->get();
+
+        $map = collect();
+        foreach ($rows as $f) {
+            $key = $f->material_id === null ? 'program' : (string) $f->material_id;
+            if (! $map->has($key)) {
+                $map->put($key, $f);
+            }
+        }
+
+        return $map;
     }
 }

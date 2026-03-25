@@ -35,6 +35,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::delete('/{material}', [LearningMaterialController::class, 'destroy'])->name('destroy');
     });
 
+    Route::get('/enrollments', [EnrollmentController::class, 'indexAll'])->name('enrollments.index');
+
     Route::prefix('programs/{program}/enrollments')->name('programs.enrollments.')->group(function () {
         Route::get('/', [EnrollmentController::class, 'index'])->name('index');
         Route::get('/create', [EnrollmentController::class, 'create'])->name('create');

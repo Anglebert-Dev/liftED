@@ -62,11 +62,11 @@ class ProgressService extends BaseService
         }
     }
 
-    public function saveFeedback(Request $request): array
+    public function saveFeedback(Request $request, int $authorUserId): array
     {
         try {
             $feedback = $this->repo->saveFeedback([
-                'mentor_id'   => auth()->id(),
+                'mentor_id'   => $authorUserId,
                 'learner_id'  => $request->input('learner_id'),
                 'program_id'  => $request->input('program_id'),
                 'material_id' => $request->filled('material_id') ? (int) $request->input('material_id') : null,

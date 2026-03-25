@@ -6,13 +6,12 @@
 @php
     $oldMaterial = old('material_id');
     $feedbackKey = ($oldMaterial === '' || $oldMaterial === null) ? 'program' : (string) $oldMaterial;
-    $prefillContent = old('content', $feedbackByMaterial->get($feedbackKey)?->content ?? '');
+    $prefillContent = old('content', $feedbackForForm->get($feedbackKey)?->content ?? '');
 @endphp
 
 @section('content')
 <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
 
-    {{-- Progress records --}}
     <div class="lg:col-span-2">
         <x-ui.card
             title="Activity Log"
@@ -20,13 +19,13 @@
 
             <p class="mb-3 text-xs text-slate-500">
                 <span class="font-medium text-textmain">Completed</span> is set when the learner marks a resource complete.
-                Mentor notes can be added per material (or one general note for the whole program) in the panel on the right.
+                The feedback column shows the latest note per resource when several people have commented.
             </p>
 
             @if($progressRecords->isEmpty())
                 <p class="text-sm text-slate-400">This learner hasn't accessed any materials yet.</p>
             @else
-                <x-table.table :headers="['Material', 'Type', 'Viewed', 'Downloaded', 'Status', 'Mentor note']">
+                <x-table.table :headers="['Material', 'Type', 'Viewed', 'Downloaded', 'Status', 'Feedback']">
                     @foreach($progressRecords as $record)
                         @php
                             $matFeedback = $feedbackByMaterial->get((string) $record->material_id);
@@ -65,9 +64,14 @@
         </x-ui.card>
     </div>
 
-    {{-- Feedback panel --}}
     <div>
-        <x-ui.card title="Mentor feedback">
+        <x-ui.card title="Feedback">
+            @if(!empty($aggregate) && $aggregate)
+                <p class="mb-4 text-xs text-slate-500">
+                    Summary shows the latest note per resource. The form below updates <span class="font-medium text-textmain">your</span> notes only.
+                </p>
+            @endif
+
             @if($fbProgram = $feedbackByMaterial->get('program'))
                 <div class="mb-4 rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
                     <p class="text-xs font-medium text-slate-500">Whole program</p>
@@ -76,32 +80,34 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('progress.feedback.store') }}" class="space-y-4">
-                @csrf
-                <input type="hidden" name="learner_id" value="{{ $learner->id }}" />
-                <input type="hidden" name="program_id" value="{{ $program->id }}" />
+            @can('update learners.progress')
+                <form method="POST" action="{{ route('progress.feedback.store') }}" class="space-y-4">
+                    @csrf
+                    <input type="hidden" name="learner_id" value="{{ $learner->id }}" />
+                    <input type="hidden" name="program_id" value="{{ $program->id }}" />
 
-                <x-forms.select
-                    name="material_id"
-                    label="About"
-                    :options="$feedbackMaterialOptions"
-                    :selected="old('material_id', '')"
-                    placeholder="Whole program (general)"
-                    :required="false" />
+                    <x-forms.select
+                        name="material_id"
+                        label="About"
+                        :options="$feedbackMaterialOptions"
+                        :selected="old('material_id', '')"
+                        placeholder="Whole program (general)"
+                        :required="false" />
 
-                <x-forms.textarea
-                    name="content"
-                    label="Your feedback"
-                    :value="$prefillContent"
-                    placeholder="Write feedback for the selected scope. Saving updates the note for that scope only."
-                    :rows="5"
-                    :required="true" />
+                    <x-forms.textarea
+                        name="content"
+                        label="Your feedback"
+                        :value="$prefillContent"
+                        placeholder="Write feedback for the selected scope. Saving updates the note for that scope only."
+                        :rows="5"
+                        :required="true" />
 
-                <x-ui.button type="submit"
-                             label="Save feedback"
-                             variant="primary"
-                             class="w-full" />
-            </form>
+                    <x-ui.button type="submit"
+                                 label="Save feedback"
+                                 variant="primary"
+                                 class="w-full" />
+                </form>
+            @endcan
         </x-ui.card>
 
         <div class="mt-4">

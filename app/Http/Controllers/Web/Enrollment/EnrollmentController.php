@@ -19,6 +19,21 @@ class EnrollmentController extends Controller
         private UserRepository       $userRepo,
     ) {}
 
+    public function indexAll()
+    {
+        A::require('list learners.enrollment');
+
+        if (A::can('view all programs')) {
+            $enrollments = $this->repo->getAll();
+        } elseif (auth()->user()->ngo_id) {
+            $enrollments = $this->repo->getByNgo((int) auth()->user()->ngo_id);
+        } else {
+            abort(403);
+        }
+
+        return view('enrollment.index-all', compact('enrollments'));
+    }
+
     public function index(Program $program)
     {
         A::require('list learners.enrollment');
