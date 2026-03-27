@@ -62,7 +62,7 @@
                         @foreach($programSummaries as $row)
                             <tr class="hover:bg-slate-50/60">
                                 <td class="px-4 py-3">
-                                    <div class="font-medium text-slate-900">{{ $row['program']->name }}</div>
+                                    <div class="font-medium text-slate-900">{{ $row['program']->title }}</div>
                                 </td>
                                 <td class="px-4 py-3 text-slate-700">{{ $row['learners_onboarded'] }}</td>
                                 <td class="px-4 py-3 text-slate-700">{{ $row['materials_total'] }}</td>

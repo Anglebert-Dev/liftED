@@ -153,9 +153,9 @@ class ReportRepository extends BaseRepository
     public function programSummaries(?int $ngoId = null): Collection
     {
         $programs = Program::query()
-            ->select(['id', 'name'])
+            ->select(['id', 'title'])
             ->when($ngoId, fn ($q) => $q->where('ngo_id', $ngoId))
-            ->orderBy('name')
+            ->orderBy('title')
             ->get();
 
         if ($programs->isEmpty()) {
