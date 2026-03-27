@@ -17,7 +17,6 @@ class EnrollmentService extends BaseService
             $isNew      = is_null($enrollment);
             $enrollment = $enrollment ?? new Enrollment();
 
-            // Prevent duplicate enrollments
             if ($isNew && $this->repo->isEnrolled(
                 $request->input('learner_id'),
                 $request->input('program_id')

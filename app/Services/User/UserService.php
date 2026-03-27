@@ -35,7 +35,6 @@ class UserService extends BaseService
 
             $this->repo->save($user);
 
-            // Sync Spatie role
             $roleName = $this->spatieRole($user->role);
             $role     = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
             $user->syncRoles([$roleName]);
