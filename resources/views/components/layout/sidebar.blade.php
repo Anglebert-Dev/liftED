@@ -8,7 +8,11 @@
     <div class="flex items-start justify-between gap-2 border-b border-white/10 px-4 py-4 sm:px-6 sm:py-5">
         <div class="flex min-w-0 items-center gap-3">
             <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-white/20">
-                <span class="text-lg font-bold text-white">L</span>
+                <img
+                    src="{{ asset('assets/logo.png') }}"
+                    alt="LiftED"
+                    class="h-7 w-7 object-contain"
+                />
             </div>
             <div class="min-w-0">
                 <p class="text-sm font-semibold leading-tight text-white">LiftED</p>
