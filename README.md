@@ -15,14 +15,22 @@
 
 ---
 
+## Requirements
+
+- **PHP**: 8.2+
+- **Composer**: 2.x
+- **Database**: PostgreSQL 14+ (or any recent Postgres)
+- **Extensions**: typical Laravel PHP extensions (mbstring, openssl, pdo, **pdo_pgsql**, tokenizer, xml, ctype, curl, zip)
+  - **Ubuntu/Debian**: install Postgres PHP driver with `sudo apt install php-pgsql` (or `php8.2-pgsql`)
+
 
 ## Quick Start
 
-### 1. Clone & install
+### 1. Clone & install dependencies
 
 ```bash
-git clone <repo>
-cd lifted
+git clone https://github.com/Anglebert-Dev/liftED.git
+cd liftED
 composer install
 cp .env.example .env
 php artisan key:generate
@@ -47,11 +55,12 @@ Create the database:
 CREATE DATABASE lifted;
 ```
 
-### 3. Run migrations & seed
+### 3. Migrate, seed, and prep storage
 
 ```bash
 php artisan migrate
 php artisan db:seed
+php artisan storage:link
 ```
 
 This creates all tables, seeds all permissions from `config/access.php`,

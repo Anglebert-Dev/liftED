@@ -56,7 +56,8 @@ class DatabaseSeeder extends Seeder
         $staffPerms = Permission::query()
             ->where(function ($q) {
                 $q->where('name', 'like', '% programs.%')
-                    ->orWhere('name', 'like', '% learners.%');
+                    ->orWhere('name', 'like', '% learners.%')
+                    ->orWhere('name', 'like', '% reports.%');
             })
             ->whereNotIn('name', ['update learners.progress', 'read learners.own_progress'])
             ->get();
@@ -80,6 +81,7 @@ class DatabaseSeeder extends Seeder
             'list learners.progress', 'read learners.progress', 'update learners.progress',
             'read programs.program',
             'read programs.material', 'list programs.material',
+            'read reports.report',
         ])->get();
         $mentorRole->syncPermissions($mentorPerms);
         $mentor->syncRoles(['Mentor']);

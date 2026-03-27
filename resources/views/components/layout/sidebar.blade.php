@@ -94,6 +94,17 @@
             </a>
         @endif
 
+        @if(A::can('read reports.report'))
+            <a href="{{ route('reports.index') }}"
+               class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z"/>
+                </svg>
+                Reports
+            </a>
+        @endif
+
         {{-- Learner: My Programs --}}
         @if(A::can('read learners.own_progress'))
             <a href="{{ route('dashboard.learner') }}"

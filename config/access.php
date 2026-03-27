@@ -18,6 +18,7 @@ return [
         'programs' => ['program', 'material'],
         'learners' => ['enrollment', 'progress'],
         'users' => ['user', 'role', 'ngo'],
+        'reports' => ['report'],
     ],
 
     'access_actions' => [

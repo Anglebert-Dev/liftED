@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\LearningMaterial\LearningMaterialController;
 use App\Http\Controllers\Web\Ngo\NgoController;
 use App\Http\Controllers\Web\Program\ProgramController;
 use App\Http\Controllers\Web\Progress\ProgressController;
+use App\Http\Controllers\Web\Report\ReportController;
 use App\Http\Controllers\Web\Role\RoleController;
 use App\Http\Controllers\Web\User\UserController;
 use Illuminate\Support\Facades\Route;
@@ -57,4 +58,6 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::post('/users/{user}/unban', [UserController::class, 'unban'])->name('users.unban');
 
     Route::resource('roles', RoleController::class)->except(['show']);
+
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 });
