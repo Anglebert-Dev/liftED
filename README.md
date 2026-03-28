@@ -17,7 +17,7 @@
 
 ## Live demo
 
-- **URL**: `http://41.186.188.91:8080/`
+- **URL**: http://41.186.188.91:8080/
 - **Note (no HTTPS/TLS yet)**: this demo is served over plain HTTP. Some networks/extensions may warn or block it.
 
 ## Requirements
